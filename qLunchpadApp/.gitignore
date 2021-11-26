@@ -1,0 +1,9 @@
+desktop.ini
+*.pro.user
+bin/
+debug/
+release/
+.qmake.stash
+Makefile
+Makefile*
+*_resource.rc
