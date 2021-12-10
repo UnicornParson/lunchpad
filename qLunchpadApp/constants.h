@@ -3,7 +3,7 @@
 
 #include <QHash>
 #include <QtGlobal>
-
+#include <QEvent>
 constexpr int validApplicationCode(0);
 constexpr int errorApplicationCode(-1);
 
@@ -38,12 +38,22 @@ enum class BtnIndex_t: int
     Button10
 };
 
-enum class ButtonEvent
+enum class ButtonEventType: int
 {
     Invalid,
     Press,
     Release,
     Hold
+};
+constexpr QEvent::Type InvalidType = QEvent::Type::None;
+inline QEvent::Type btnEventToQtEvent(ButtonEventType e)
+{
+    switch(e)
+    {
+    case ButtonEventType::Press:{return QEvent::Type::KeyPress;}
+    case ButtonEventType::Release:{return QEvent::Type::KeyRelease;}
+    default:{return InvalidType;}
+    }
 };
 
 namespace ApiConstants
@@ -57,11 +67,11 @@ constexpr CmdType PressCmd = 'p';
 constexpr CmdType ReleaseCmd = 'r';
 constexpr CmdType HoldCmd = 'h';
 
-const QHash<CmdType, ButtonEvent> ButtonEventMapping =
+const QHash<CmdType, ButtonEventType> ButtonEventMapping =
 {
-    {PressCmd, ButtonEvent::Press},
-    {ReleaseCmd, ButtonEvent::Release},
-    {HoldCmd, ButtonEvent::Hold}
+    {PressCmd, ButtonEventType::Press},
+    {ReleaseCmd, ButtonEventType::Release},
+    {HoldCmd, ButtonEventType::Hold}
 };
 
 }; //namespace ApiConstants

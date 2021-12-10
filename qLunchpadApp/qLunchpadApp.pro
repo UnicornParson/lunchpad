@@ -1,7 +1,5 @@
-QT -= gui
-QT += serialport
+QT += serialport widgets
 CONFIG += c++17 console
-CONFIG -= app_bundle
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
@@ -37,12 +35,19 @@ QMAKE_CXXFLAGS += -floop-parallelize-all -ftree-parallelize-loops=4
 
 SOURCES += \
         comreader.cpp \
-        main.cpp
+        executor.cpp \
+        keyinjector.cpp \
+        main.cpp \
+        winconstants.cpp
 
 HEADERS += \
     comreader.h \
-    constants.h
+    constants.h \
+    executor.h \
+    keyinjector.h \
+    winconstants.h
 
 RESOURCES += \
     rc.qrc
 
+LIBS += -lKernel32

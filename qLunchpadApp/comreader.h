@@ -4,6 +4,8 @@
 #include <QObject>
 #include "constants.h"
 #include <QtSerialPort/QSerialPort>
+#include <QAtomicInteger>
+#include <QTimer>
 
 class ComReader : public QObject
 {
@@ -14,13 +16,21 @@ public:
     bool open(const QString& port);
     void close();
     bool isOpened() const;
-    bool read()ж
-signals:
-    void onButtonEvent(ButtonEvent e);
+    bool read(int timeout);
 
+signals:
+    void onButtonEvent(ButtonEventType e, int key);
+    void onStatEvent(const QString& msg);
 public slots:
+
+    void onReportTimeout();
 private:
+    bool processEventString(const QString& e);
     QSerialPort m_port;
+    QAtomicInteger<quint64> m_receivedEvents;
+    QAtomicInteger<quint64> m_droppedEvents;
+    QTimer* m_statTimer;
+    //QAtomicInteger<quint64> m_receivedEvents;
 };
 
 #endif // COMREADER_H

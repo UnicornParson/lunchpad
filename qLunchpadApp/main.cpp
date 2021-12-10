@@ -4,6 +4,8 @@
 #include <QDebug>
 #include "constants.h"
 #include "comreader.h"
+#include "executor.h"
+
 namespace
 {
 static const QString HelpFile("://readme.md");
@@ -40,28 +42,37 @@ int main(int argc, char *argv[])
     ComReader reader;
     QString comName;
     QString presetName;
+    bool firstArg = true;
     for(const QString& arg: args)
     {
+        if(firstArg)
+        {
+            firstArg = false;
+            continue;
+        }
         if(arg == "-h" || arg == "--help")
         {
             printHelp();
             return validApplicationCode;
         }
-        else if(arg == "-l" || arg == "--list")
+        else if(arg == "-l" || arg == "--list" )
         {
             QStringList comList = reader.comList();
             for(const QString& cname : comList)
             {
                 logMsg(cname);
             }
+            return validApplicationCode;
         }
         else if (presetName.isEmpty())
         {
             presetName = arg.trimmed();
+            continue;
         }
         else if (comName.isEmpty())
         {
             comName = arg.toUpper().trimmed();
+            continue;
         }
         else
         {
@@ -69,13 +80,19 @@ int main(int argc, char *argv[])
             printHelp();
             return errorApplicationCode;
         }
-
-        if(presetName.isEmpty() || comName.isEmpty())
-        {
-            errMsg("invalid argument list");
-            printHelp();
-            return errorApplicationCode;
-        }
     }
+    if(presetName.isEmpty() || comName.isEmpty())
+    {
+        errMsg("invalid argument list");
+        printHelp();
+        return errorApplicationCode;
+    }
+    Executor* e = new Executor();
+    e->setComPort(comName);
+    e->start();
+    getchar();
+    e->requestInterruption();
+    e->wait();
+
     return a.exec();
 }
