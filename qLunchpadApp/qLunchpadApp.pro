@@ -34,20 +34,25 @@ CONFIG(release, debug|release) {
 QMAKE_CXXFLAGS += -floop-parallelize-all -ftree-parallelize-loops=4
 
 SOURCES += \
-        comreader.cpp \
-        executor.cpp \
-        keyinjector.cpp \
-        main.cpp \
-        winconstants.cpp
+    comreader.cpp \
+    executor.cpp \
+    keyinjector.cpp \
+    main.cpp \
+    winconstants.cpp \
+    winsendwrapper.cpp
 
 HEADERS += \
     comreader.h \
     constants.h \
     executor.h \
     keyinjector.h \
-    winconstants.h
+    keytypes.h \
+    winconstants.h \
+    winsendwrapper.h
 
-RESOURCES += \
-    rc.qrc
-
+RESOURCES += rc.qrc
+win32 {
+    RC_FILE = manifest.rc
+}
 LIBS += -lKernel32
+OTHER_FILES += qLunchpadApp.exe.manifest
