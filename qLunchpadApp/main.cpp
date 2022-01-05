@@ -1,15 +1,22 @@
 #include <QCoreApplication>
 #include <QFile>
+#include <QTextCodec>
 #include <iostream>
 #include <QDebug>
+#include "tools.h"
 #include "constants.h"
 #include "comreader.h"
 #include "executor.h"
 
+using namespace Tools;
+
 namespace
 {
-static const QString HelpFile("://readme.md");
-
+CONST_LITERAL HelpFile("://readme.md");
+CONST_LITERAL LOGS_BASE_DIR("logs/");
+CONST_LITERAL CRASH_BASE_DIR("crash/");
+CONST_LITERAL LOGS_CFG_FILENAME("log.cfg");
+CONST_LITERAL LOG_FILENAME("console.log");
 }
 
 void errMsg(const QString& s)
@@ -31,18 +38,27 @@ void printHelp()
     }
     else
     {
-        qWarning("cannot open help file");
+        LOG_WARNING("cannot open help file");
     }
 }
 
 int main(int argc, char *argv[])
 {
+    LogGlobalSetup::self().setConsoleLoggingEnabled(false);
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
     QCoreApplication a(argc, argv);
     QStringList args = a.arguments();
     ComReader reader;
     QString comName;
     QString presetName;
     bool firstArg = true;
+    LogGlobalSetup::self().setConsoleLoggingEnabled(true);
+    QString path = QString(argv[0]);
+    int lastSlash = path.lastIndexOf('\\');
+    QString binDir = path.left(lastSlash + 1);
+    QString logDir = CTools::pathNormalize(binDir + LOGS_BASE_DIR + QDateTime::currentDateTime().toString("dd.MM.yyyy_hh.mm.ss"));
+    LogStarter::initLogging(logDir, LOG_FILENAME, CTools::pathNormalize(binDir + LOGS_BASE_DIR + LOGS_CFG_FILENAME));
+
     for(const QString& arg: args)
     {
         if(firstArg)
@@ -76,14 +92,14 @@ int main(int argc, char *argv[])
         }
         else
         {
-            errMsg(QString("invalid argument %1").arg(arg));
+            LOG_ERROR(QString("invalid argument %1").arg(arg));
             printHelp();
             return errorApplicationCode;
         }
     }
     if(presetName.isEmpty() || comName.isEmpty())
     {
-        errMsg("invalid argument list");
+        LOG_ERROR("invalid argument list");
         printHelp();
         return errorApplicationCode;
     }

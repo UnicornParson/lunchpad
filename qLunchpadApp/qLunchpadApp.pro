@@ -14,6 +14,8 @@ CONFIG(debug, debug|release) {
   UI_DIR = bin/debug/.ui
 }
 
+DEFINES += TOLERATE_GARBAGE_CODE
+
 CONFIG(release, debug|release) {
   # enable optimisation
   QMAKE_CXXFLAGS_RELEASE += -O4
@@ -32,7 +34,7 @@ CONFIG(release, debug|release) {
   UI_DIR = bin/release/.ui
 }
 QMAKE_CXXFLAGS += -floop-parallelize-all -ftree-parallelize-loops=4
-
+include(toollib/tools.pri)
 SOURCES += \
     comreader.cpp \
     executor.cpp \
@@ -56,3 +58,7 @@ win32 {
 }
 LIBS += -lKernel32
 OTHER_FILES += qLunchpadApp.exe.manifest
+
+requiredData.path = $${DESTDIR}
+requiredData.files += deploy/*
+INSTALLS += requiredData

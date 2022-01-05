@@ -2,10 +2,7 @@
 arduino based lunchpad
 
 ## desktop app
-### requirements
-python packages
- - pyautogui
- - pyserial
+see qLunchpadApp/readme.md
 
 # tips and tricks
 ## ports list

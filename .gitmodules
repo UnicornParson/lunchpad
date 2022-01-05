@@ -1,0 +1,3 @@
+[submodule "qLunchpadApp/toollib"]
+	path = qLunchpadApp/toollib
+	url = git@github.com:UnicornParson/toollib.git
